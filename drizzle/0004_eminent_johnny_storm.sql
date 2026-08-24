@@ -1,0 +1,1 @@
+ALTER TABLE `finance_state` ADD `freelance_json` text DEFAULT '[]' NOT NULL;

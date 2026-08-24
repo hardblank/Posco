@@ -1,0 +1,5 @@
+import {clearSessionCookie,createSession,isAuthenticated,sessionCookie} from "./session";
+import {signInWithPassword} from "../supabase";
+export async function GET(req:Request){return Response.json({authenticated:await isAuthenticated(req)},{headers:{"cache-control":"no-store"}})}
+export async function POST(req:Request){let body:{email?:string;username?:string;password?:string};try{body=await req.json()}catch{return Response.json({error:"Preencha e-mail e senha"},{status:400})}try{const user=await signInWithPassword(String(body.email||body.username||"").trim(),String(body.password||""));return Response.json({ok:true},{headers:{"set-cookie":sessionCookie(await createSession(user.id)),"cache-control":"no-store"}})}catch{await new Promise(resolve=>setTimeout(resolve,450));return Response.json({error:"E-mail ou senha incorretos"},{status:401,headers:{"cache-control":"no-store"}})}}
+export async function DELETE(){return Response.json({ok:true},{headers:{"set-cookie":clearSessionCookie(),"cache-control":"no-store"}})}

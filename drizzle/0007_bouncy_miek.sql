@@ -1,0 +1,1 @@
+ALTER TABLE `finance_state` ADD `data_version` integer DEFAULT 0 NOT NULL;
