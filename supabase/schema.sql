@@ -7,6 +7,9 @@ create table if not exists public.finance_state (
   theme_bg text not null default '#030504',
   theme_accent text not null default '#2f9d6f',
   theme_surface text not null default '#0d110f',
+  finance_mode text not null default 'individual' check (finance_mode in ('individual', 'family')),
+  primary_person_name text not null default 'Titular',
+  secondary_person_name text not null default 'Pessoa 2',
   updated_at timestamptz not null default now()
 );
 
