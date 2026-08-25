@@ -112,3 +112,22 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
 /* Removable due groups and unified typography */
 .dueDayPicker{font-family:var(--user-display-font);font-size:22px;font-weight:800;line-height:1.1;letter-spacing:-.025em}.dueDayPicker select{font-family:var(--user-display-font);font-size:17px}.periodHeadActions{display:flex;align-items:flex-end;flex-direction:column;gap:10px}.removeDuePeriod{padding:6px 9px;border:1px solid #5b3333;border-radius:7px;background:#1b1010;color:#d98c8c;font:800 8px var(--user-display-font);text-transform:uppercase;letter-spacing:.06em;cursor:pointer}.removeDuePeriod:hover{border-color:#a75050;color:#ffb1b1}.removeDuePeriod:disabled{opacity:.25;cursor:not-allowed}
 @media(max-width:680px){.dueDayPicker{font-size:19px}.dueDayPicker select{font-size:16px}.periodHeadActions{gap:7px}.removeDuePeriod{padding:5px 7px;font-size:7px}}
+
+
+/* Compact individual/family selector */
+.profileModeBar{padding:10px 12px;border-radius:12px}
+.profileModeBar>div:first-child{gap:3px}
+.profileModeBar strong{font-size:11px}
+.profileModeActions{gap:6px}
+.modeSwitch{padding:3px;border-radius:9px}
+.modeSwitch button,.profileEdit{min-height:28px;padding:6px 10px;border-radius:6px;font-size:9px;line-height:1}
+.profileEdit{padding-inline:9px}
+@media(max-width:680px){
+  .profileModeBar{align-items:center;flex-direction:row;gap:10px;padding:10px 11px}
+  .profileModeBar>div:first-child{min-width:0;flex:1}
+  .profileModeBar .eyebrow{font-size:8px;letter-spacing:.12em}
+  .profileModeBar strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .profileModeActions{align-items:center;flex-direction:row;flex:0 0 auto;gap:5px}
+  .modeSwitch{display:flex}
+  .modeSwitch button,.profileEdit{width:auto;min-height:27px;padding:6px 8px;font-size:8px}
+}
