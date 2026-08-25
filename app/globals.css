@@ -115,10 +115,10 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
 
 /* Compact individual/family selector */
 .profileModeBar{
-  width:max-content;
+  width:min(470px,100%);
   max-width:100%;
-  min-height:42px;
-  justify-content:flex-start;
+  min-height:58px;
+  justify-content:space-between;
   gap:10px;
   margin:0 0 14px;
   padding:4px 5px 4px 12px;
@@ -150,7 +150,7 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
 @media(max-width:680px){
   .profileModeBar{
     width:100%;
-    min-height:40px;
+    min-height:54px;
     align-items:center;
     flex-direction:row;
     justify-content:space-between;
