@@ -206,3 +206,21 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
 .analysisFootnote{margin:13px 2px 0;color:#657169;font-size:8px;text-align:right}
 @media(max-width:1050px){.insightGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.financialIntelligence{margin:26px 0 12px;padding:17px 13px;border-radius:17px}.intelligenceHead{align-items:flex-start;flex-direction:column;gap:10px}.intelligenceHead h2{font-size:23px}.analysisBadge{padding:7px 9px}.insightGrid{grid-template-columns:1fr;gap:8px}.insightCard{min-height:0;padding:15px}.analysisFootnote{text-align:left;line-height:1.4}}
+
+
+/* Standalone financial reading page */
+.desktopViewNav{width:max-content;max-width:100%;min-height:40px}
+.intelligencePage{max-width:1500px}
+.financialIntelligence.standalone{margin-top:0}
+.financialIntelligence.standalone .intelligenceHead{align-items:center}
+.financialIntelligence.standalone .intelligenceHead h1{margin:7px 0 9px;font:700 34px/1.05 var(--user-display-font);letter-spacing:-.035em}
+.intelligenceControls{display:flex;align-items:center;gap:8px}
+.intelligenceControls select{min-width:170px;padding:9px 12px;border:1px solid color-mix(in srgb,var(--user-accent) 34%,var(--line));border-radius:10px;background:#080c0a;color:var(--ink);font:800 10px var(--user-display-font)}
+.intelligenceEmpty{display:grid;min-height:260px;place-items:center;border:1px dashed #303b35;border-radius:14px;color:var(--muted);font-size:11px}
+.mobileViewNav{grid-template-columns:repeat(4,1fr)}
+@media(max-width:680px){
+ .financialIntelligence.standalone .intelligenceHead h1{font-size:27px}
+ .intelligenceControls{width:100%;align-items:stretch;flex-direction:column}
+ .intelligenceControls select{width:100%}
+ .intelligenceControls .analysisBadge{width:max-content}
+}
