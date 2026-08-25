@@ -5,6 +5,8 @@ type Expense={id:number;name:string;amount:number;type:string;owner:string;note:
 type FreelanceJob={id:number;name:string;amount:number;owner:string;note:string};
 type Month={monthKey:string;income:number;incomeRobson:number|null;incomeGabi:number|null;freelancers:FreelanceJob[];foodRobson:number;foodGabi:number;expenses:Expense[]};
 type Backup={profile:{themeBg:string;themeAccent:string;themeSurface:string;financeMode?:"individual"|"family";primaryPersonName?:string;secondaryPersonName?:string};months:Month[]};
+type Contribution={id:number;amount:number;date:string;note:string};
+type Goal={id:string;name:string;target_amount:number;initial_amount:number;monthly_amount:number;target_date:string|null;priority:string;contributions:Contribution[]};
 type Insight={id:string;tone:"positive"|"attention"|"important"|"neutral";title:string;summary:string;evidence:string;action:string};
 
 const BRL=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
@@ -15,6 +17,33 @@ const fixedIncome=(month:Month)=>Number(month.incomeRobson??0)+Number(month.inco
 const freelanceIncome=(month:Month)=>month.freelancers.reduce((sum,item)=>sum+Number(item.amount||0),0);
 const expenseTotal=(month:Month)=>month.expenses.reduce((sum,item)=>sum+Number(item.amount||0),0);
 const foodExpense=(month:Month)=>month.expenses.filter(item=>/aliment|mercado|supermerc|ifood|refei|lanche|restaurante/i.test(item.name)).reduce((sum,item)=>sum+Number(item.amount||0),0);
+
+const goalSaved=(goal:Goal)=>Number(goal.initial_amount||0)+(goal.contributions||[]).reduce((sum,item)=>sum+Number(item.amount||0),0);
+const monthsUntil=(date:string)=>{const now=new Date(),target=new Date(date+"T12:00:00");return Math.max(1,(target.getFullYear()-now.getFullYear())*12+target.getMonth()-now.getMonth())};
+const futureMonth=(amount:number)=>{const date=new Date();date.setMonth(date.getMonth()+Math.max(0,amount));return new Intl.DateTimeFormat("pt-BR",{month:"long",year:"numeric"}).format(date).replace(/^./,letter=>letter.toUpperCase())};
+
+function buildGoalInsights(goals:Goal[],months:Month[],currentKey:string):Insight[]{
+ const recent=months.filter(month=>month.monthKey<=currentKey).sort((a,b)=>a.monthKey.localeCompare(b.monthKey)).slice(-3);
+ const average=recent.length?recent.reduce((sum,month)=>sum+fixedIncome(month)+freelanceIncome(month)-expenseTotal(month),0)/recent.length:0;
+ const current=months.find(month=>month.monthKey===currentKey),candidates:{score:number;insight:Insight}[]=[];
+ for(const goal of goals){
+  const target=Number(goal.target_amount||0),saved=goalSaved(goal),remaining=Math.max(0,target-saved),monthly=Number(goal.monthly_amount||0),percent=target?Math.min(100,saved/target*100):0;
+  if(!target||!remaining)continue;
+  const deadline=goal.target_date?monthsUntil(goal.target_date):null,required=deadline?remaining/deadline:0;
+  if(deadline&&monthly<required)candidates.push({score:100+(goal.priority==="high"?10:0),insight:{id:`goal-behind-${goal.id}`,tone:"important",title:`A meta “${goal.name}” precisa de um aporte maior`,summary:`Para cumprir o prazo, seriam necessários ${money(required)} por mês. O valor planejado é ${money(monthly)}.`,evidence:`${money(remaining)} restantes ÷ ${deadline} ${deadline===1?"mês":"meses"} = ${money(required)} por mês. Aporte definido: ${money(monthly)}.`,action:monthly?"Ajuste o aporte ou a data para tornar o planejamento possível.":"Defina um aporte mensal ou revise a data desejada para esta meta."}});
+  else if(percent>=80||remaining<=Math.max(monthly,average>0?average*.3:0))candidates.push({score:90,insight:{id:`goal-close-${goal.id}`,tone:"positive",title:`Faltam ${money(remaining)} para concluir “${goal.name}”`,summary:`A meta já está ${percent.toFixed(1).replace(".",",")}% concluída.`,evidence:`${money(saved)} acumulados de ${money(target)}. ${money(target)} − ${money(saved)} = ${money(remaining)} restantes.`,action:"Avalie se é possível concluir a meta sem comprometer as contas essenciais."}});
+  else if(monthly>0&&average>0&&monthly>average)candidates.push({score:85,insight:{id:`goal-tight-${goal.id}`,tone:"important",title:`O aporte de “${goal.name}” supera a sobra média`,summary:`A meta prevê ${money(monthly)} por mês, mas a sobra média é de ${money(average)}.`,evidence:`Média de sobra dos últimos ${recent.length} meses: ${money(average)}. Aporte planejado: ${money(monthly)}. Diferença: ${money(monthly-average)}.`,action:"Reduza o aporte, amplie o prazo ou reveja despesas antes de assumir esse compromisso."}});
+  else if(monthly>0){const forecast=Math.ceil(remaining/monthly),impact=average>0?monthly/average*100:0;candidates.push({score:60+(goal.priority==="high"?5:0),insight:{id:`goal-pace-${goal.id}`,tone:impact>60?"attention":"neutral",title:`“${goal.name}” está ${percent.toFixed(1).replace(".",",")}% concluída`,summary:`Mantendo ${money(monthly)} por mês, a previsão é concluir em ${futureMonth(forecast)}.`,evidence:`${money(remaining)} restantes ÷ ${money(monthly)} por mês = ${forecast} ${forecast===1?"mês":"meses"}. ${average>0?`O aporte representa ${impact.toFixed(1).replace(".",",")}% da sobra média.`:"Ainda não há histórico suficiente para comparar o impacto."}`,action:impact>60?"Acompanhe a sobra mensal para não pressionar as contas essenciais.":"Mantenha a frequência dos aportes para preservar essa previsão."}})}
+  const last=(goal.contributions||[]).map(item=>item.date).sort().at(-1),idle=last?Date.now()-new Date(last+"T12:00:00").getTime()>62*86400000:saved>0;
+  if(idle)candidates.push({score:70,insight:{id:`goal-idle-${goal.id}`,tone:"attention",title:`A meta “${goal.name}” está sem novos aportes`,summary:last?`O último valor foi registrado em ${new Date(last+"T12:00:00").toLocaleDateString("pt-BR")}.`:"Ainda não há aportes registrados no histórico.",evidence:`${money(saved)} acumulados de ${money(target)}. Ainda faltam ${money(remaining)}.`,action:"Registre o próximo aporte ou ajuste o planejamento para refletir a situação atual."}});
+ }
+ if(current){
+  const ending=current.expenses.filter(item=>item.type==="Parcela"&&item.installmentCurrent&&item.installmentTotal&&Number(item.installmentTotal)>Number(item.installmentCurrent)).map(item=>({...item,remaining:Number(item.installmentTotal)-Number(item.installmentCurrent)})).filter(item=>item.remaining<=6);
+  const active=goals.filter(goal=>goalSaved(goal)<Number(goal.target_amount));
+  if(ending.length&&active.length){const soonest=Math.min(...ending.map(item=>item.remaining)),items=ending.filter(item=>item.remaining===soonest),released=items.reduce((sum,item)=>sum+Number(item.amount||0),0),goal=active.sort((a,b)=>(a.priority==="high"?0:1)-(b.priority==="high"?0:1))[0];candidates.push({score:80,insight:{id:"goal-opportunity",tone:"positive",title:`${money(released)} mensais poderão reforçar “${goal.name}”`,summary:`Parcelas próximas do fim liberarão esse valor em ${monthName(shiftMonth(currentKey,soonest))}.`,evidence:`${items.map(item=>`${item.name}: ${money(Number(item.amount||0))}`).join(" + ")} = ${money(released)} liberados por mês.`,action:"Quando as parcelas terminarem, direcione esse valor à meta sem aumentar o compromisso atual."}})}
+ }
+ return candidates.sort((a,b)=>b.score-a.score).slice(0,2).map(item=>item.insight);
+}
 
 function buildInsights(months:Month[],currentKey:string):Insight[]{
  const ordered=[...months].sort((a,b)=>a.monthKey.localeCompare(b.monthKey)),current=ordered.find(month=>month.monthKey===currentKey);
@@ -38,9 +67,9 @@ function buildInsights(months:Month[],currentKey:string):Insight[]{
 }
 
 export default function FinancialReading(){
- const [backup,setBackup]=useState<Backup|null>(null),[monthKey,setMonthKey]=useState(""),[error,setError]=useState("");
- useEffect(()=>{fetch("/api/backup").then(response=>{if(!response.ok)throw new Error();return response.json()}).then((data:Backup)=>{setBackup(data);const latest=data.months.at(-1)?.monthKey||"";setMonthKey(latest);document.documentElement.style.setProperty("--user-bg",data.profile.themeBg);document.documentElement.style.setProperty("--user-accent",data.profile.themeAccent);document.documentElement.style.setProperty("--user-surface",data.profile.themeSurface)}).catch(()=>setError("Não foi possível carregar sua leitura financeira."))},[]);
- const insights=useMemo(()=>{if(!backup||!monthKey)return [];const mode=backup.profile.financeMode||"individual",months=backup.months.map(month=>mode==="individual"?{...month,income:Number(month.incomeRobson??month.income??0),incomeGabi:null}:month);return buildInsights(months,monthKey)},[backup,monthKey]);
+ const [backup,setBackup]=useState<Backup|null>(null),[goals,setGoals]=useState<Goal[]>([]),[monthKey,setMonthKey]=useState(""),[error,setError]=useState("");
+ useEffect(()=>{Promise.all([fetch("/api/backup"),fetch("/api/goals")]).then(async([backupResponse,goalsResponse])=>{if(!backupResponse.ok)throw new Error();const data:Backup=await backupResponse.json();setBackup(data);if(goalsResponse.ok){const goalData=await goalsResponse.json();setGoals(goalData.goals||[])}const latest=data.months.at(-1)?.monthKey||"";setMonthKey(latest);document.documentElement.style.setProperty("--user-bg",data.profile.themeBg);document.documentElement.style.setProperty("--user-accent",data.profile.themeAccent);document.documentElement.style.setProperty("--user-surface",data.profile.themeSurface)}).catch(()=>setError("Não foi possível carregar sua leitura financeira."))},[]);
+ const insights=useMemo(()=>{if(!backup||!monthKey)return [];const mode=backup.profile.financeMode||"individual",months=backup.months.map(month=>mode==="individual"?{...month,income:Number(month.incomeRobson??month.income??0),incomeGabi:null}:month);return [...buildInsights(months,monthKey),...buildGoalInsights(goals,months,monthKey)]},[backup,goals,monthKey]);
  return <main className="intelligencePage">
   <nav className="viewNav desktopViewNav" aria-label="Área do dashboard"><a href="/">Visão mensal</a><a href="/resumo">Resumo anual</a><a href="/dados">Dados e backup</a><a className="active" href="/leitura">Leitura</a><a href="/metas">Metas</a></nav>
   <section className="financialIntelligence standalone"><div className="intelligenceHead"><div><span className="eyebrow">LEITURA FINANCEIRA</span><h1>O que seus números mostram</h1><p>Conclusões calculadas com seus lançamentos reais e o histórico disponível.</p></div><div className="intelligenceControls">{backup&&<select aria-label="Mês analisado" value={monthKey} onChange={event=>setMonthKey(event.target.value)}>{backup.months.map(month=><option key={month.monthKey} value={month.monthKey}>{monthName(month.monthKey)}</option>)}</select>}<span className="analysisBadge"><i/> Análise atualizada</span></div></div>
