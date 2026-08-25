@@ -115,20 +115,21 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
 
 /* Compact individual/family selector */
 .profileModeBar{
-  width:min(470px,100%);
-  max-width:100%;
-  min-height:58px;
+  display:flex;
+  align-items:center;
   justify-content:space-between;
-  gap:10px;
-  margin:0 0 14px;
-  padding:4px 5px 4px 12px;
-  border-radius:12px;
+  gap:5px;
+  width:min(470px,100%);
+  min-height:0;
+  margin:0 0 24px;
+  padding:4px;
+  border-radius:11px;
 }
-.profileModeBar>div:first-child{display:block;min-width:0}
+.profileModeBar>div:first-child{display:block;min-width:0;padding-left:12px}
 .profileModeBar>div:first-child .eyebrow{display:none}
 .profileModeBar strong{
   display:block;
-  max-width:150px;
+  max-width:125px;
   overflow:hidden;
   color:var(--muted);
   font-size:9px;
@@ -136,28 +137,29 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.profileModeActions{gap:5px}
-.modeSwitch{padding:3px;border-radius:9px}
+.profileModeActions{display:flex;align-items:center;flex-direction:row;gap:5px}
+.modeSwitch{display:flex;padding:0;border-radius:8px}
 .modeSwitch button,.profileEdit{
   width:auto;
-  min-height:28px;
-  padding:6px 9px;
-  border-radius:6px;
+  min-height:25px;
+  padding:6px 10px;
+  border-radius:7px;
   font-size:8px;
   line-height:1;
 }
-.profileEdit{padding-inline:8px}
+.profileEdit{padding-inline:9px}
 @media(max-width:680px){
   .profileModeBar{
-    width:100%;
-    min-height:54px;
+    width:min(470px,100%);
+    min-height:0;
     align-items:center;
     flex-direction:row;
     justify-content:space-between;
-    gap:7px;
-    padding:4px 5px 4px 10px;
+    gap:5px;
+    padding:4px;
   }
+  .profileModeBar>div:first-child{padding-left:8px}
   .profileModeActions{align-items:center;flex-direction:row;flex:0 0 auto}
-  .modeSwitch{display:flex}
-  .modeSwitch button,.profileEdit{width:auto;min-height:27px;padding:6px 7px;font-size:8px}
+  .modeSwitch{display:flex;padding:0}
+  .modeSwitch button,.profileEdit{width:auto;min-height:25px;padding:6px 7px;font-size:8px}
 }
