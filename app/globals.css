@@ -176,3 +176,33 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
     min-height:40px;
   }
 }
+
+
+/* Data-driven financial intelligence */
+.financialIntelligence{margin:36px 0 18px;padding:26px;border:1px solid color-mix(in srgb,var(--user-accent) 28%,var(--line));border-radius:20px;background:linear-gradient(145deg,color-mix(in srgb,var(--user-accent) 7%,var(--user-surface)),var(--user-surface));box-shadow:0 20px 60px #0005}
+.intelligenceHead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:18px}
+.intelligenceHead h2{margin:6px 0}
+.intelligenceHead p{margin:0;color:var(--muted);font-size:11px}
+.analysisBadge{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid color-mix(in srgb,var(--user-accent) 30%,var(--line));border-radius:99px;background:color-mix(in srgb,var(--user-accent) 8%,transparent);color:color-mix(in srgb,var(--user-accent) 68%,white);font-size:9px;font-weight:800;white-space:nowrap}
+.analysisBadge i{width:7px;height:7px;border-radius:50%;background:var(--user-accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--user-accent) 14%,transparent)}
+.insightGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.insightCard{position:relative;display:flex;flex-direction:column;min-height:255px;padding:17px;border:1px solid #2d3832;border-radius:14px;background:#0b100d;overflow:hidden}
+.insightCard:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:#657169}
+.insightCard.positive:before{background:#3fb87a}.insightCard.attention:before{background:#d59a3b}.insightCard.important:before{background:#d05e5e}.insightCard.neutral:before{background:color-mix(in srgb,var(--user-accent) 78%,white)}
+.insightTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.insightTop>span{color:#5f6b64;font:800 10px var(--user-display-font)}
+.insightTop>i{padding:4px 7px;border-radius:99px;background:#19201c;color:#9eaaa3;font:800 7px var(--user-display-font);font-style:normal;text-transform:uppercase;letter-spacing:.08em}
+.insightCard.positive .insightTop>i{background:#10261a;color:#6bd59a}.insightCard.attention .insightTop>i{background:#2a2110;color:#e3b35f}.insightCard.important .insightTop>i{background:#291515;color:#e68b8b}
+.insightCard h3{margin:0 0 8px;font:800 14px/1.35 var(--user-display-font);letter-spacing:-.015em}
+.insightCard>p{margin:0 0 14px;color:var(--muted);font-size:10px;line-height:1.55}
+.insightCard details{margin-top:auto;border-top:1px solid #263029;padding-top:11px}
+.insightCard summary{color:color-mix(in srgb,var(--user-accent) 68%,white);font-size:9px;font-weight:800;cursor:pointer;list-style:none}
+.insightCard summary::-webkit-details-marker{display:none}
+.insightCard summary:after{content:"+";float:right;font-size:14px;line-height:.7}.insightCard details[open] summary:after{content:"−"}
+.insightEvidence{margin-top:10px;padding:10px;border-radius:8px;background:#070a08;color:#a9b5ae;font-size:9px;line-height:1.55}
+.insightAction{display:flex;flex-direction:column;gap:4px;margin-top:12px;padding:10px;border-radius:9px;background:color-mix(in srgb,var(--user-accent) 7%,#0a0e0b)}
+.insightAction b{color:color-mix(in srgb,var(--user-accent) 72%,white);font-size:8px;text-transform:uppercase;letter-spacing:.08em}
+.insightAction span{color:#bcc7c1;font-size:9px;line-height:1.45}
+.analysisFootnote{margin:13px 2px 0;color:#657169;font-size:8px;text-align:right}
+@media(max-width:1050px){.insightGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.financialIntelligence{margin:26px 0 12px;padding:17px 13px;border-radius:17px}.intelligenceHead{align-items:flex-start;flex-direction:column;gap:10px}.intelligenceHead h2{font-size:23px}.analysisBadge{padding:7px 9px}.insightGrid{grid-template-columns:1fr;gap:8px}.insightCard{min-height:0;padding:15px}.analysisFootnote{text-align:left;line-height:1.4}}
