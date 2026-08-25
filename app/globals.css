@@ -224,3 +224,13 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
  .intelligenceControls select{width:100%}
  .intelligenceControls .analysisBadge{width:max-content}
 }
+
+
+/* Verified account information helper */
+.editForm .verifiedCheck{align-items:flex-start}
+.verifiedCheck>span{display:flex;flex-direction:column;gap:4px}
+.verifiedLabel{display:block;color:#c7d1cb;font-size:11px;line-height:1.45}
+.verifiedLabel b{color:var(--ink);font-weight:800}
+.verifiedLabel em{color:var(--muted);font-size:10px;font-style:normal;font-weight:500}
+.verifiedCheck small{display:block;color:#d6a85c;font-size:9px;font-weight:650;line-height:1.4}
+@media(max-width:680px){.verifiedLabel{font-size:10px}.verifiedLabel em{display:block;margin-top:2px;font-size:9px}}
