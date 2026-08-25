@@ -78,3 +78,8 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
 
 /* Success feedback for account creation and recovery */
 .loginCard .loginError[role="status"]{color:#fff;background:#0387fb;border:1px solid #000;border-radius:9px;margin-top:15px;padding:12px;font-size:12px}
+
+/* Readable authentication helper links */
+.loginCard>small{font-size:13px;line-height:1.55;color:#b6c3bc}
+.loginCard>small a{color:color-mix(in srgb,var(--user-accent) 72%,white);font-weight:800;text-decoration:none}
+.loginCard>small a:hover{text-decoration:underline}
