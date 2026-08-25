@@ -4,7 +4,7 @@ import {useEffect,useMemo,useState} from "react";
 type Expense={id:number;name:string;amount:number;type:string;owner:string;note:string;confirmed:boolean;period:string;paymentStatus?:"pending"|"paid";paidDate?:string;installmentCurrent?:number|null;installmentTotal?:number|null};
 type FreelanceJob={id:number;name:string;amount:number;owner:string;note:string};
 type Month={monthKey:string;income:number;incomeRobson:number|null;incomeGabi:number|null;freelancers:FreelanceJob[];foodRobson:number;foodGabi:number;expenses:Expense[]};
-type Backup={profile:{themeBg:string;themeAccent:string;themeSurface:string};months:Month[]};
+type Backup={profile:{themeBg:string;themeAccent:string;themeSurface:string;financeMode?:"individual"|"family";primaryPersonName?:string;secondaryPersonName?:string};months:Month[]};
 type Insight={id:string;tone:"positive"|"attention"|"important"|"neutral";title:string;summary:string;evidence:string;action:string};
 
 const BRL=new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
@@ -40,7 +40,7 @@ function buildInsights(months:Month[],currentKey:string):Insight[]{
 export default function FinancialReading(){
  const [backup,setBackup]=useState<Backup|null>(null),[monthKey,setMonthKey]=useState(""),[error,setError]=useState("");
  useEffect(()=>{fetch("/api/backup").then(response=>{if(!response.ok)throw new Error();return response.json()}).then((data:Backup)=>{setBackup(data);const latest=data.months.at(-1)?.monthKey||"";setMonthKey(latest);document.documentElement.style.setProperty("--user-bg",data.profile.themeBg);document.documentElement.style.setProperty("--user-accent",data.profile.themeAccent);document.documentElement.style.setProperty("--user-surface",data.profile.themeSurface)}).catch(()=>setError("Não foi possível carregar sua leitura financeira."))},[]);
- const insights=useMemo(()=>backup&&monthKey?buildInsights(backup.months,monthKey):[],[backup,monthKey]);
+ const insights=useMemo(()=>{if(!backup||!monthKey)return [];const mode=backup.profile.financeMode||"individual",months=backup.months.map(month=>mode==="individual"?{...month,income:Number(month.incomeRobson??month.income??0),incomeGabi:null}:month);return buildInsights(months,monthKey)},[backup,monthKey]);
  return <main className="intelligencePage">
   <nav className="viewNav desktopViewNav" aria-label="Área do dashboard"><a href="/">Visão mensal</a><a href="/resumo">Resumo anual</a><a href="/dados">Dados e backup</a><a className="active" href="/leitura">Leitura</a></nav>
   <section className="financialIntelligence standalone"><div className="intelligenceHead"><div><span className="eyebrow">LEITURA FINANCEIRA</span><h1>O que seus números mostram</h1><p>Conclusões calculadas com seus lançamentos reais e o histórico disponível.</p></div><div className="intelligenceControls">{backup&&<select aria-label="Mês analisado" value={monthKey} onChange={event=>setMonthKey(event.target.value)}>{backup.months.map(month=><option key={month.monthKey} value={month.monthKey}>{monthName(month.monthKey)}</option>)}</select>}<span className="analysisBadge"><i/> Análise atualizada</span></div></div>
