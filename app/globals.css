@@ -163,3 +163,16 @@ button,a,select{touch-action:manipulation;-webkit-tap-highlight-color:transparen
   .modeSwitch{display:flex;padding:0}
   .modeSwitch button,.profileEdit{width:auto;min-height:25px;padding:6px 7px;font-size:8px}
 }
+
+/* Exact shared size for top navigation and profile selector */
+.desktopViewNav,.profileModeBar{
+  width:min(340px,100%);
+  min-height:40px;
+}
+.profileModeBar{margin-bottom:24px}
+@media(max-width:680px){
+  .desktopViewNav,.profileModeBar{
+    width:min(340px,100%);
+    min-height:40px;
+  }
+}
