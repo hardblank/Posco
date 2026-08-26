@@ -1,4 +1,5 @@
 import {getUserId,unauthorized} from "../auth/session";
+import "pdf-parse/worker";
 import {PDFParse} from "pdf-parse";
 
 export const runtime="nodejs";
