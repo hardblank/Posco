@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ClientNavigation from "./ClientNavigation";
 import AuthGate from "./AuthGate";
@@ -14,5 +14,13 @@ export const metadata: Metadata = {
   openGraph: { title: "Shift Zone Finance", description: "Renda, gastos e decisões em um só lugar", images: ["/og.png"] },
   twitter: { card: "summary_large_image", title: "Shift Zone Finance", description: "Renda, gastos e decisões em um só lugar", images: ["/og.png"] },
 };
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 const themeBoot=`(()=>{try{const r=document.documentElement,s=localStorage;r.style.setProperty('--user-bg',s.getItem('dashfinance-bg')||'#030504');r.style.setProperty('--user-accent',s.getItem('dashfinance-accent')||'#2f9d6f');r.style.setProperty('--user-surface',s.getItem('dashfinance-surface')||'#0d110f');const f=s.getItem('dashfinance-font')||'modern',fonts={modern:'Inter,Segoe UI,system-ui,sans-serif',geometric:'Avenir Next,Trebuchet MS,Segoe UI,sans-serif',rounded:'ui-rounded,Arial Rounded MT Bold,Trebuchet MS,sans-serif'};r.style.setProperty('--user-display-font',fonts[f]||fonts.modern)}catch(e){}})()`;
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="pt-BR" suppressHydrationWarning><head><meta name="theme-color" content="#030504"/><script dangerouslySetInnerHTML={{__html:themeBoot}}/></head><body><ClientNavigation/><AuthGate>{children}</AuthGate><PwaInstall/></body></html>}
+const zoomLock=`(()=>{const block=e=>e.preventDefault();document.addEventListener('gesturestart',block,{passive:false});document.addEventListener('gesturechange',block,{passive:false});document.addEventListener('gestureend',block,{passive:false});document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false})})()`;
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="pt-BR" suppressHydrationWarning><head><meta name="theme-color" content="#030504"/><script dangerouslySetInnerHTML={{__html:themeBoot}}/><script dangerouslySetInnerHTML={{__html:zoomLock}}/></head><body><ClientNavigation/><AuthGate>{children}</AuthGate><PwaInstall/></body></html>}
